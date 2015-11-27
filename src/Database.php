@@ -22,8 +22,22 @@ class Database
 		$this->connection = new mysqli(host, username, password, database);
 	}
 
-	public function addData(){
-		$query = "INSERT INTO data (value, timestamp, source, link) VALUES ('Lorem ipsum', CURRENT_TIMESTAMP, 'twitter', 'http://twitter.com/')";
-		return $this->connection->query($query);
+	private function validate($comment, $source, $link){
+		var_dump($comment, $source, $link);
+		if(empty($comment) || empty($source) || empty($link)){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	public function addData($comment, $source, $link){
+		$query = "INSERT INTO data (value, timestamp, source, link) VALUES ('{$comment}', CURRENT_TIMESTAMP, '{$source}', '{$link}')";
+		
+		if($this->validate($comment, $source, $link)){
+			return $this->connection->query($query);
+		}else{
+			return false;
+		}
 	}
 }
