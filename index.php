@@ -5,6 +5,7 @@
 
 	$db = new Database();
 	$db->getTweets();
+	
 	if($_POST){
 		$search = $_POST['search'];
 
