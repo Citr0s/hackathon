@@ -6,11 +6,6 @@ use TwitterAPIExchange;
 
 require_once 'config.php';
 
-/*
-	CREATE TABLE data ( id int NOT NULL AUTO_INCREMENT, value  text, timestamp varchar(50), source varchar(255), link varchar(255), PRIMARY KEY (id));
-	INSERT INTO data (value, timestamp, source, link) VALUES ('Lorem ipsum', CURRENT_TIMESTAMP, 'twitter', 'http://twitter.com/');
-*/
-
 class Database
 {
 	private $connection;
@@ -32,35 +27,37 @@ class Database
 		return false;
 	}
 
-	public function addData($comment, $source, $link){
+	public function addData($comment, $source, $link, $timestamp = null){
 		$comment = $this->connection->real_escape_string($comment);
 		$source = $this->connection->real_escape_string($source);
 		$link = $this->connection->real_escape_string($link);
-		$query = "INSERT INTO data (value, timestamp, source, link) VALUES ('{$comment}', CURRENT_TIMESTAMP, '{$source}', '{$link}')";
+		$query = "INSERT INTO data (value, timestamp, source, link) VALUES ('{$comment}', '{$timestamp}', '{$source}', '{$link}')";
 
-		if($this->validate($comment, $source, $link)){
-			return $this->connection->query($query);
-		}else{
-			return false;
-		}
+		return $this->validate($comment, $source, $link) ? $this->connection->query($query) : false;
 	}
 
-	public function search($search){
-		if(!empty($search)){
-			$search = $this->connection->real_escape_string($search);
-			$query = "SELECT * FROM data";
-			$data = array();
-			$results = $this->connection->query($query);
-
-			while($row = $results->fetch_assoc()){
-				$haystack = implode($row);
-				if(strpos($haystack, $search) !== false){
-					$data[] = $row; 
-				}
-			}
+	public function search($string){
+		$data = [];
+		$results = $this->getAllTweets($string);
+		while($row = $results->fetch_assoc()){
+			$data = array_merge($data, $this->searchForString($string, $row));
 		}
-
 		return $data;
+	}
+
+	private function searchForString($needle, $row){
+		$data = [];
+		$haystack = implode($row);
+		if(strpos($haystack, $needle) !== false){
+			$data[] = $row; 
+		}
+		return $data;
+	}
+
+	private function getAllTweets($string){
+		$string = $this->connection->real_escape_string($string);
+		$query = "SELECT * FROM data";
+		return $this->connection->query($query);
 	}
 
 	public function getTweets(){
@@ -88,7 +85,8 @@ class Database
 					$comment = $tweet->text;
 					$source = 'twitter';
 					$link = 'https://twitter.com/infowebmaniak/status/'. $tweet->id;
-					$this->addData($comment, $source, $link);
+					$timestamp = $tweet->created_at;
+					$this->addData($comment, $source, $link, $timestamp);
 				}
 			}
 		}

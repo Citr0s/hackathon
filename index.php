@@ -9,7 +9,7 @@
 	if($_POST){
 		$search = $_POST['search'];
 
-		if($db->search($search)){
+		if(!empty($search) && $db->search($search)){
 			$output = '<div class="alert alert-success" role="alert">Showing results!</div>';
 		}else{
 			$output = '<div class="alert alert-danger" role="alert">No results found.</div>';
@@ -38,13 +38,13 @@
 			<h1>Feedback</h1>
 			<form method="post" action="index.php">
 			  <div class="form-group">
-			    <input type="text" class="form-control" id="search" name="search" placeholder="Search">
+			    <input type="text" class="form-control" id="search" name="search" placeholder="Search" value="<?php echo ($_POST && !empty($search)) ? $search : ''; ?>">
 			  </div>
 			  <button type="submit" class="btn btn-primary">Search</button>
 			  <br/><br/>
 			</form>
 			<?php
-				if($_POST){
+				if($_POST && !empty($search)){
 					foreach($db->search($search) as $row){
 						echo '
 						<div class="panel panel-default">
@@ -52,7 +52,7 @@
 						    <tr>
 								<td><a target="_blank" href="'. $row['link'] .'">'. $row['id'] .'</a></td>
 								<td>'. $row['value'] .'</td>
-								<td>'. $row['timestamp'] .'</td>
+								<td>'. date('F Y H:i:s', strtotime($row['timestamp'])) .'</td>
 								<td>'. $row['source'] .'</td>
 							</tr>
 						  </div>
@@ -70,7 +70,7 @@
 					    <tr>
 							<td><a target="_blank" href="'. $row['link'] .'">'. $row['id'] .'</a></td>
 							<td>'. $row['value'] .'</td>
-							<td>'. $row['timestamp'] .'</td>
+							<td>'. date('F Y H:i:s', strtotime($row['timestamp'])) .'</td>
 							<td>'. $row['source'] .'</td>
 						</tr>
 					  </div>
