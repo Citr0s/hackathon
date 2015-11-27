@@ -12,7 +12,7 @@
 		if($db->addData($comment, $source, $link)){
 			$output = '<div class="alert alert-success" role="alert">Successfulluy added a record!</div>';
 		}else{
-			$output = '<div class="alert alert-danger" role="alert">Sorry, something went wrong!</div>';
+			$output = '<div class="alert alert-danger" role="alert">All fields are required.</div>';
 		}
 	}
 ?>
