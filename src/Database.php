@@ -49,6 +49,24 @@ class Database
 		}
 	}
 
+	public function search($search){
+		if(!empty($search)){
+			$search = $this->connection->real_escape_string($search);
+			$query = "SELECT * FROM data";
+			$data = array();
+			$results = $this->connection->query($query);
+
+			while($row = $results->fetch_assoc()){
+				$haystack = implode($row);
+				if(strpos($haystack, $search) !== false){
+					$data[] = $row; 
+				}
+			}
+		}
+
+		return $data;
+	}
+
 	public function getTweets(){
 		$settings = array(
 		    'oauth_access_token' => "228807675-waeMbDnB0QsMiPdFFrEM1MN6QQGl0WU6KuvJqzo1",

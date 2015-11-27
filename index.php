@@ -3,20 +3,17 @@
 
 	use Hackathon\Database;
 
-	//if($_POST){
-		// $comment = $_POST['comment'];
-		// $source = $_POST['source'];
-		// $link = $_POST['link'];
+	$db = new Database();
+	$db->getTweets();
+	if($_POST){
+		$search = $_POST['search'];
 
-		$db = new Database();
-		// if($db->addData($comment, $source, $link)){
-		// 	$output = '<div class="alert alert-success" role="alert">Successfulluy added a record!</div>';
-		// }else{
-		// 	$output = '<div class="alert alert-danger" role="alert">All fields are required.</div>';
-		// }
-
-		var_dump($db->getTweets());
-	//}
+		if($db->search($search)){
+			$output = '<div class="alert alert-success" role="alert">Showing results!</div>';
+		}else{
+			$output = '<div class="alert alert-danger" role="alert">No results found.</div>';
+		}
+	}
 
 ?>
 <!DOCTYPE html>
@@ -38,7 +35,30 @@
 	<div class="row">
 		<div class="col-md-12">
 			<h1>Feedback</h1>
+			<form method="post" action="index.php">
+			  <div class="form-group">
+			    <input type="text" class="form-control" id="search" name="search" placeholder="Search">
+			  </div>
+			  <button type="submit" class="btn btn-primary">Search</button>
+			  <br/><br/>
+			</form>
 			<?php
+				if($_POST){
+					foreach($db->search($search) as $row){
+						echo '
+						<div class="panel panel-default">
+						  <div class="panel-body">
+						    <tr>
+								<td><a target="_blank" href="'. $row['link'] .'">'. $row['id'] .'</a></td>
+								<td>'. $row['value'] .'</td>
+								<td>'. $row['timestamp'] .'</td>
+								<td>'. $row['source'] .'</td>
+							</tr>
+						  </div>
+						</div>
+						';
+					}
+				}else{
 				$connection = new mysqli(host, username, password, database);
 				$results = $connection->query("SELECT * FROM data ORDER BY id DESC");
 
@@ -55,6 +75,7 @@
 					  </div>
 					</div>
 					';
+					}
 				}
 			?>
 		</div>
