@@ -2,6 +2,10 @@
 	require 'vendor/autoload.php';
 
 	use Hackathon\Database;
+
+	$db = new Database();
+
+	var_dump($db->addData());
 ?>
 <!DOCTYPE html>
 <html lang="en">
