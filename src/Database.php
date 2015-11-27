@@ -23,7 +23,6 @@ class Database
 	}
 
 	private function validate($comment, $source, $link){
-		var_dump($comment, $source, $link);
 		if(empty($comment) || empty($source) || empty($link)){
 			return false;
 		}else{
