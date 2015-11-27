@@ -1,3 +1,8 @@
+<?php
+	require 'vendor/autoload.php';
+
+	use Hackathon\Database;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
